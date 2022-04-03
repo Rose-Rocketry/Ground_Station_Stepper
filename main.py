@@ -25,14 +25,24 @@ def setup_yagi():
 
 status = {'status':"inactive"}
 
-async def main():
+def test_yagi():
+    for i in range(step_count*2):
+        GPIO.output(STEP, GPIO.HIGH)
+        sleep(delay)
+        GPIO.output(STEP, GPIO.LOW)
+        sleep(delay)
     
+    status.set("status", "inactive")
+
+async def main():    
     # Listen to the yagi's status:
     async for socket in websockets.connect("ws/peripheral/usli_yagi_0/controller"):
         try:
             await socket.send(json.dumps(status))
             while not status.get("status") == "ready":
                 status_json = await socket.recv()
+                if status_json.get("status") == "test":
+                    test_yagi()
                 try:
                     status = json.loads(status_json)
                 except ValueError:
