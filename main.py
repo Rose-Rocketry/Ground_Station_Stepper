@@ -90,5 +90,5 @@ async def main():
 if __name__ == "__main__":
     setup_yagi()
     loop = asyncio.get_event_loop()
-    task = loop.create_task(main)
+    task = loop.create_task(main())
     loop.run_forever()
