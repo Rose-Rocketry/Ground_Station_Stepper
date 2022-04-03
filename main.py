@@ -39,9 +39,11 @@ async def main():
     async for socket in websockets.connect("ws://localhost:8000/ws/peripheral/usli_yagi_0/controller"):
         try:
             await socket.send(json.dumps(status))
+            print("Sent status")
             while not status.get("status") == "ready":
                 status_json = await socket.recv()
                 if status_json.get("status") == "test":
+                    print("Testing Yagi")
                     test_yagi()
                 try:
                     status = json.loads(status_json)
