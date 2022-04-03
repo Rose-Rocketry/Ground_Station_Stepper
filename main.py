@@ -36,7 +36,7 @@ def test_yagi():
 
 async def main():    
     # Listen to the yagi's status:
-    async for socket in websockets.connect("ws/peripheral/usli_yagi_0/controller"):
+    async for socket in websockets.connect("ws://localhost:8000/ws/peripheral/usli_yagi_0/controller"):
         try:
             await socket.send(json.dumps(status))
             while not status.get("status") == "ready":
@@ -67,7 +67,7 @@ async def main():
             continue
 
     # Connect back to set status to rotating.
-    async for socket in websockets.connect("ws/peripheral/usli_yagi_0/controller"):
+    async for socket in websockets.connect("ws://localhost:8000/ws/peripheral/usli_yagi_0/controller"):
             try:
                 status.set("status","rotating")
                 await socket.send(json.dumps(status))
