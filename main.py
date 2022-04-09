@@ -14,7 +14,7 @@ DIR = 17
 STEP = 27
 CW =1
 CCW =0
-SPR = 200 #steps per revolution (360/1.8)
+SPR = 360/1.8 #steps per revolution (360/1.8)
 
 delay = .018
 step_count = SPR*5
@@ -119,16 +119,19 @@ async def listen_for_landing():
         except websockets.ConnectionClosed:
             pass
 
-async def main():    
-    loop = asyncio.get_running_loop()
-    while loop.is_running():
-        states = {
-            'inactive': wait_for_activation,
-            'listen': listen_for_landing,
-            'rotating': rotate_yagi,
-        }   
-        runing_state = states.get(status["status"], wait_for_activation)
-        await runing_state()
+async def main():
+    try:
+        loop = asyncio.get_running_loop()
+        while loop.is_running():
+            states = {
+                'inactive': wait_for_activation,
+                'listen': listen_for_landing,
+                'rotating': rotate_yagi,
+            }   
+            runing_state = states.get(status["status"], wait_for_activation)
+            await runing_state()
+    finally:
+        GPIO.cleanup()
 
 async def dergather():
     await asyncio.gather(main(), state_listener())
