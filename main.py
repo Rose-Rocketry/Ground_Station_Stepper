@@ -9,6 +9,7 @@ import RPi.GPIO as GPIO
 import logging
 import bpsk_stage1
 import nonbi_angleinfo
+import threading
 
 # TODO Re-engineer so that we can control the yagi with parallel executors.
 logging.basicConfig(level=logging.INFO)
@@ -138,8 +139,12 @@ async def main():
 async def dergather():
     await asyncio.gather(main(), state_listener())
 
-#Main Program
-if __name__ == "__main__":
-    bpsk_stage1.main()
+def start_tasks():
+    threading.Thread(bpsk_stage1.main()).start()
     setup_yagi()
     asyncio.run(dergather())
+
+#Main Program
+if __name__ == "__main__":
+    start_tasks()
+   
